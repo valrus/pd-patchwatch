@@ -1,0 +1,14 @@
+{
+	"folders":
+	[
+		{
+			"path": "patches"
+		},
+		{
+			"path": "patches/pi"
+		},
+		{
+			"path": "pypd"
+		}
+	]
+}

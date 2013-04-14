@@ -1,0 +1,575 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ac",
+				"activateTask"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "pd-patchwatch.py",
+			"settings":
+			{
+				"buffer_size": 1508,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "patches/pi/apdist.pd",
+			"settings":
+			{
+				"buffer_size": 1453,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/Markdown/Marked.sublime-build",
+	"command_palette":
+	{
+		"height": 375.0,
+		"selected_items":
+		[
+			[
+				"url",
+				"StringEncode: URL Encode"
+			],
+			[
+				"urle",
+				"StringEncode: URL Encode"
+			],
+			[
+				"stringe",
+				"StringEncode: URL Encode"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"upgr",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"upda",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"colo",
+				"Color Console: Enable"
+			],
+			[
+				"color",
+				"Color Console: Enable"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 588.0
+	},
+	"console":
+	{
+		"height": 247.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/valrus/Sites/writing/music/music2006.shtml",
+		"/Users/valrus/Sites/blog/index.html",
+		"/Users/valrus/Sites/blog/meta/index.html",
+		"/Users/valrus/Dropbox/Shared App Data/Notes/scott walker.md",
+		"/Users/valrus/Sites/website.sublime-project",
+		"/Users/valrus/Sites/_templates/layout.html",
+		"/Users/valrus/Sites/_templates/post.html",
+		"/Users/valrus/Sites/_themes/moment/templates/layout.html",
+		"/Users/valrus/Sites/index.html",
+		"/Users/valrus/Sites/settings.yml",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/Markdown/Markdown.tmLanguage",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/User/Markdown.sublime-settings",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/User/MultiMarkdown.sublime-settings",
+		"/Library/WebServer/Documents/study.shtml",
+		"/Library/WebServer/Documents/writing/music/music2012.shtml",
+		"/Library/WebServer/Documents/website.sublime-project",
+		"/Users/valrus/Dropbox/Shared App Data/Notes/music2012.md",
+		"/Library/WebServer/Documents/imccowan/writing/music/music2012.md",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/Markdown/MultiMarkdown.tmLanguage",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/User/Markdown/MultiMarkdown.sublime-settings",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/User/Markdown/Markdown.sublime-settings",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/MarkdownEditing/Markdown.sublime-settings",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/MarkdownEditing/MarkdownEditor.tmTheme",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/Markdown/Symbol List - Heading.tmPreferences",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/HTML/HTML.tmLanguage",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/MarkdownEditing/MultiMarkdown.sublime-settings",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/Default/Preferences (OSX).sublime-settings",
+		"/Users/valrus/Code/Kivy Examples/Pong/main.py",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/User/Python/Kivy.sublime-build",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/valrus/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/Default/Preferences (Windows).sublime-settings",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/Text/Plain text.tmLanguage",
+		"/Users/valrus/Library/Application Support/Sublime Text 2/Packages/User/Widget.sublime-settings",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/Theme - Soda/Soda Light/Widget - Soda Light.sublime-settings",
+		"/Users/valrus/Dropbox/Shared App Data/Sublime Text 2/Packages/Theme - Default/Widgets.stTheme",
+		"/Users/valrus/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/valrus/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/valrus/Code/TaskSlasher/app.yaml",
+		"/Users/valrus/Code/TaskSlasher/taskslasher.py",
+		"/Users/valrus/Code/TaskDestroyer/app.yaml",
+		"/Users/valrus/Code/TaskDestroyer/taskslasher.py",
+		"/Users/valrus/Code/TaskDestroyer/taskdestroyer.py"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"menlo",
+			"font",
+			"disable",
+			"text\\.html\\.basic",
+			"include",
+			"block-level",
+			"meta.disable",
+			"bold",
+			"Line",
+			"self\\.y",
+			"self\\.x",
+			"trac"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"y_pos",
+			"x_pos"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "pd-patchwatch.py",
+					"settings":
+					{
+						"buffer_size": 1508,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "patches/pi/apdist.pd",
+					"settings":
+					{
+						"buffer_size": 1453,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								178,
+								178
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 36.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 102.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 186.0,
+	"status_bar_visible": true
+}
