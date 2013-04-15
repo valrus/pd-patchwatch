@@ -4,6 +4,7 @@ import cmd
 import os
 import sys
 import textwrap
+from functools import partial
 
 from pypd import Pd, PdParser
 
@@ -24,10 +25,18 @@ class PdPatch(object):
             patchFullName, self.patchName = patchName, patchName[:-3]
         else:
             patchFullName, self.patchName = patchName + ".pd", patchName
+        self.objects = 0
+        self.gui = {}
         p = PdParser(os.path.join(patchDir, patchFullName))
-        p.add_filter_method(PdPatch.found_hslider, type="#X", action="hsl")
+        p.add_filter_method(PdPatch.found_hslider, type="#X", object="hsl")
+        p.add_filter_method(partial(PdPatch.found_object, self),
+                            type="#X", action="obj")
         print(p.parse(), "elements in this patch.")
+        print(self.objects, "objects.")
         self.proc = Pd(open=patchFullName, path=[patchDir])
+
+    def found_object(self, canvasStack, type, action, args):
+        self.objects += 1
 
     @staticmethod
     def found_hslider(canvasStack, type, action, args):
@@ -70,8 +79,15 @@ class PatchWatcher(cmd.Cmd):
             pass
         self.patch = PdPatch(self.patchDir, patchName)
 
+    def complete_start(self, text, line, begidx, endidx):
+        barePatchNames = [p.replace(".pd", "") for p in self.availPatches]
+        if text:
+            return [p for p in barePatchNames if p.startswith(text)]
+        else:
+            return barePatchNames
+
     def do_stop(self, __):
-        if (self.patch.kill()):
+        if (self.patch and self.patch.kill()):
             print("Patch {0} stopped.".format(self.patch.patchName))
 
     do_kill = do_stop
