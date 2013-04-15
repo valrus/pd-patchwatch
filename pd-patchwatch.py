@@ -12,6 +12,15 @@ PD_BIN = os.environ.get("PD_BIN", os.path.join(os.sep, "usr", "bin", "pd"))
 PATCH_DIR = os.path.join(os.path.dirname(__file__), "patches")
 
 
+class PdGuiObject(object):
+    pass
+
+
+class Pd_hslider(PdGuiObject):
+    def __init__(self, argList):
+        self.args = argList
+
+
 class PdPatch(object):
     def kill(self):
         if self.proc and self.proc.Alive():
@@ -28,9 +37,10 @@ class PdPatch(object):
         self.objects = 0
         self.gui = {}
         p = PdParser(os.path.join(patchDir, patchFullName))
-        p.add_filter_method(PdPatch.found_hslider, type="#X", object="hsl")
         p.add_filter_method(partial(PdPatch.found_object, self),
-                            type="#X", action="obj")
+                            type="#X")
+        p.add_filter_method(partial(PdPatch.found_hslider, self),
+                            type="#X", object="hsl")
         print(p.parse(), "elements in this patch.")
         print(self.objects, "objects.")
         self.proc = Pd(open=patchFullName, path=[patchDir])
@@ -38,12 +48,12 @@ class PdPatch(object):
     def found_object(self, canvasStack, type, action, args):
         self.objects += 1
 
-    @staticmethod
-    def found_hslider(canvasStack, type, action, args):
+    def found_hslider(self, canvasStack, type, action, args):
+        self.gui[self.objects - 1] = Pd_hslider(args.split())
         print("canvasStack:", canvasStack,
               "type:", type,
               "action:", action,
-              "arguments:", args)
+              "arguments:", args.split())
 
 
 class PatchWatcher(cmd.Cmd):
@@ -86,9 +96,20 @@ class PatchWatcher(cmd.Cmd):
         else:
             return barePatchNames
 
+    def do_show(self, line):
+        if self.patch:
+            print("Current patch:", self.patch.patchName)
+            if self.patch.gui:
+                print(
+                    "Patch GUI elements:",
+                    os.linesep.join(("{:<3} {}".format(i, obj.args)
+                                     for i, obj in self.patch.gui.items()))
+                )
+
     def do_stop(self, __):
-        if (self.patch and self.patch.kill()):
+        if self.patch and self.patch.kill():
             print("Patch {0} stopped.".format(self.patch.patchName))
+        self.patch = None
 
     do_kill = do_stop
 
@@ -105,7 +126,8 @@ def main(argv=None):
     try:
         patchShell.cmdloop()
     except:
-        patchShell.do_quit()
+        patchShell.do_quit(None)
+        raise
 
 
 if __name__ == "__main__":
