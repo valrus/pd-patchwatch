@@ -61,7 +61,9 @@ class PdSend(asynchat.async_chat):
 
     def Send(self, data):
         if self._success:
-            asynchat.async_chat.push(self, " ".join([str(d) for d in data]) + ";\n")
+            asynchat.async_chat.push(
+                self,
+                " ".join([str(d) for d in data]) + ";" + os.linesep)
         else:
             self._cache.append(data)
 
@@ -267,7 +269,8 @@ class Pd:
 
     def Error(self, error):
         """
-        Override this to catch anything sent by Pd to stderr (e.g. [print] objects).
+        Override this to catch anything sent by Pd to stderr
+        (e.g. [print] objects).
         """
         errors = error.split(" ")
         method = getattr(self, 'Error_' + errors[0], None)

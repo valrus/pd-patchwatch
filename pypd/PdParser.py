@@ -97,7 +97,7 @@ class PdParser:
         >>> print p.parse(), "elements found"
         49 elements found
         """
-        element_re = re.compile("(#(.*?)[^\\\]);\n", re.MULTILINE | re.DOTALL)
+        element_re = re.compile(r"(#(.*?)[^\\]);\n", re.MULTILINE | re.DOTALL)
         # how many elements did we find?
         count = 0
         # look for the kinds of gui elements we know about
@@ -110,11 +110,12 @@ class PdParser:
             # the 'action' field
             action = bits.pop(0)
             # the 'object' field
-            object = len(bits) >= 3 and bits[2] or ""
+            object = bits[2] if len(bits) >= 3 else ""
 
             # check that the 'type' field is valid
             if not len(type) == 2 or not type[0] == "#":
-                raise PdParserException("Type did not begin with '#' at element %d" % l)
+                raise PdParserException(
+                    "Type did not begin with '#' at element " + count)
 
             # see if our canvas stack is down a level
             if type == "#N":
@@ -132,7 +133,7 @@ class PdParser:
                                ("type", type),
                                ("action", action),
                                ("object", object)]
-                if all(filter.get(f) == t for f, t in testFilters):
+                if all(filter.get(f, t) == t for f, t in testFilters):
                     method(self.canvas, type, action, " ".join(bits))
         return count
 
@@ -143,4 +144,3 @@ def _test():
 
 if __name__ == "__main__":
     _test()
-
