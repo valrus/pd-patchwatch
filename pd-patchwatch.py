@@ -7,18 +7,10 @@ import textwrap
 from functools import partial
 
 from pypd import Pd, PdParser
+import pdgui
 
 PD_BIN = os.environ.get("PD_BIN", os.path.join(os.sep, "usr", "bin", "pd"))
 PATCH_DIR = os.path.join(os.path.dirname(__file__), "patches")
-
-
-class PdGuiObject(object):
-    pass
-
-
-class Pd_hslider(PdGuiObject):
-    def __init__(self, argList):
-        self.args = argList
 
 
 class PdPatch(object):
@@ -39,8 +31,9 @@ class PdPatch(object):
         p = PdParser(os.path.join(patchDir, patchFullName))
         p.add_filter_method(partial(PdPatch.found_object, self),
                             type="#X")
-        p.add_filter_method(partial(PdPatch.found_hslider, self),
-                            type="#X", object="hsl")
+        for cls in pdgui.PdGui.__subclasses__():
+            p.add_filter_method(partial(PdPatch.found_gui, self, cls),
+                                type="#X", object=cls.__name__)
         print(p.parse(), "elements in this patch.")
         print(self.objects, "objects.")
         self.proc = Pd(open=patchFullName, path=[patchDir])
@@ -48,8 +41,8 @@ class PdPatch(object):
     def found_object(self, canvasStack, type, action, args):
         self.objects += 1
 
-    def found_hslider(self, canvasStack, type, action, args):
-        self.gui[self.objects - 1] = Pd_hslider(args.split())
+    def found_gui(self, cls, canvasStack, type, action, args):
+        self.gui[self.objects - 1] = cls(args.split())
         print("canvasStack:", canvasStack,
               "type:", type,
               "action:", action,
@@ -105,6 +98,10 @@ class PatchWatcher(cmd.Cmd):
                     os.linesep.join(("{:<3} {}".format(i, obj.args)
                                      for i, obj in self.patch.gui.items()))
                 )
+
+    def do_dbg(self, __):
+        import pdb
+        pdb.set_trace()
 
     def do_stop(self, __):
         if self.patch and self.patch.kill():
