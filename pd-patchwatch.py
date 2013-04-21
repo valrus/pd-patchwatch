@@ -1,5 +1,6 @@
 # python3
 
+import argparse
 import cmd
 import os
 import sys
@@ -97,14 +98,14 @@ class PatchWatcher(cmd.Cmd):
             print("", file=router)
         return routerName
 
-    def __init__(self, patchDir=PATCH_DIR):
+    def __init__(self, patchDir=PATCH_DIR, nogui=True):
         cmd.Cmd.__init__(self)
         self.patchDir = patchDir
         # TODO: handle case where patchDir doesn't exist
         self.availPatches = os.listdir(self.patchDir)
         self.patch = None
         self.router = self._makeRouter()
-        self.pd = pd(initPatch=self.router)
+        self.pd = pd(initPatch=self.router, nogui=nogui)
 
     def preloop(self):
         self.do_list(None)
@@ -165,8 +166,18 @@ class PatchWatcher(cmd.Cmd):
     do_exit = do_quit
 
 
+def setupParser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--gui", action="store_false", dest="nogui",
+                        default=False,
+                        help="Start Pd with a gui.")
+    return parser
+
+
 def main(argv=None):
-    patchShell = PatchWatcher()
+    parser = setupParser()
+    args = parser.parse_args()
+    patchShell = PatchWatcher(nogui=args.nogui)
     try:
         patchShell.cmdloop()
     except:
