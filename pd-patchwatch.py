@@ -104,7 +104,7 @@ class PatchWatcher(cmd.Cmd):
         self.availPatches = os.listdir(self.patchDir)
         self.patch = None
         self.router = self._makeRouter()
-        self.pd = pd(nogui=False, initPatch=self.router)
+        self.pd = pd(initPatch=self.router)
 
     def preloop(self):
         self.do_list(None)
