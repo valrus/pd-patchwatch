@@ -1,7 +1,31 @@
 import os
 
 
-class PdGui(object):
+class PdObject(object):
+    args = [
+        "x_pos",  # horizontal position within the window
+        "y_pos",  # vertical position within the window
+        "name",   # object name
+    ]
+
+    def __init__(self, argList):
+        self.args = []
+        self.inlets = {}
+        self.outlets = {}
+        for i, arg in enumerate(self.__class__.args):
+            self.__dict__[self.__class__.args[i]] = arg
+        self.args = argList[len(self.__class__.args):]
+
+    def __str__(self):
+        return os.linesep.join(
+            ["Object {} with named args:".format(self.name)] +
+            ["    {}: {}".format(k, v) for k, v in self.__dict__.items()
+             if k is not "args"] +
+            ["and other args: " + ", ".join(self.args)] if self.args else []
+        )
+
+
+class PdGui(PdObject):
     objs = [
         "bng",  # bang
         "tgl",  # toggle
@@ -13,25 +37,9 @@ class PdGui(object):
         "nbx",   # number box
     ]
 
-    def __init__(self, argList):
-        for i, arg in enumerate(argList):
-            # set instance variables for each arg
-            self.__dict__[self.__class__.args[i]] = arg
-
-    def __str__(self):
-        return os.linesep.join(
-            ["Object {} with args:".format(self.name)] +
-            ["    {}: {}".format(arg, self.__dict__[arg])
-             for arg in self.__class__.args]
-        )
-
-
 
 class bng(PdGui):
-    args = [
-        "x_pos",  # horizontal position within the window
-        "y_pos",  # vertical position within the window
-        "name",
+    args = PdObject.args + [
         "size",  # square size of the gui element
         "hold",  # hold time in milliseconds, ranges from 50 to 1000000000
         "interrupt",  # interrupt time in milliseconds, ranges from 10 to 250
@@ -50,10 +58,7 @@ class bng(PdGui):
 
 
 class tgl(PdGui):
-    args = [
-        "x_pos",  # horizontal position within the window
-        "y_pos",  # vertical position within the window
-        "name",
+    args = PdObject.args + [
         "size",  # square size of the gui element
         "init",  # set on load
         "send",  # send symbol name
@@ -76,7 +81,7 @@ class nbx(PdGui):
         "x_pos",  # horizontal position within the window
         "y_pos",  # vertical position within the window
         "name",
-        "size",  # number of digits the element displays
+        "width",  # number of digits the element displays
         "height",  # vertical size of element in pixels
         "min",  # minimum value, typically -1e+037
         "max",  # maximum value, typically 1e+037
@@ -92,15 +97,13 @@ class nbx(PdGui):
         "bg_color",  # background color
         "fg_color",  # foreground color
         "label_color",  # label color
+        "init_value",  # value sent when the [init] attribute is set
         "log_height",  # log steps: values from 10 to 2000, default is 256
     ]
 
 
 class hdl(PdGui):
-    args = [
-        "x_pos",  # horizontal position within the window
-        "y_pos",  # vertical position within the window
-        "name",
+    args = PdObject.args + [
         "size",  # x or y size, depending on the number of radio buttons
         "new_old",  # send new and old value, or only the new value
         "init",  # send default value on init
@@ -122,10 +125,7 @@ hradio = vdl = vradio = hdl
 
 
 class hsl(PdGui):
-    args = [
-        "x_pos",  # horizontal position within the window
-        "y_pos",  # vertical position within the window
-        "name",
+    args = PdObject.args + [
         "width",  # horizontal size of gui element
         "height",  # vertical size of gui element
         "bottom",  # minimum value

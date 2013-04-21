@@ -207,6 +207,8 @@ class Pd:
             args.append("-nogui")
 
         if open:
+            if not os.path.isabs(open):
+                open = os.path.join(os.path.dirname(__file__), "patches", open)
             args.append("-open")
             args.append(open)
 
