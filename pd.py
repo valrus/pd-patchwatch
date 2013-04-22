@@ -1,6 +1,7 @@
 import os
 import signal
 import sys
+import time
 from subprocess import Popen, PIPE
 
 DEFAULT_PORT = 3000
@@ -49,8 +50,9 @@ class pd(object):
 
         try:
             print(args)
-            self.proc = Popen(args, stdin=None, stderr=PIPE, stdout=PIPE,
+            self.proc = Popen(args, stdin=None,
                               close_fds=(sys.platform != "win32"))
+            time.sleep(5)
         except OSError:
             raise PdException(
                 "Problem running `{}` from '{}'".format(self.pdbin,
@@ -62,8 +64,10 @@ class pd(object):
         sendProc = Popen(args, stdin=PIPE, close_fds=(sys.platform != "win32"),
                          universal_newlines=True)
         out, err = sendProc.communicate(input=msg)
+        print(out, err)
+        time.sleep(1)
 
     def kill(self):
-        os.kill(self.proc.pid, signal.SIGINT)
+        self.proc.send_signal(signal.SIGINT)
         if self.proc:
             self.proc.wait()
