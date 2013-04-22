@@ -237,7 +237,7 @@ class PatchWatcher(cmd.Cmd):
 def setupParser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--gui", action="store_false", dest="nogui",
-                        default=False,
+                        default=True,
                         help="Start Pd with a gui.")
     parser.add_argument("--dir", dest="patchDir", default=PATCH_DIR,
                         help="Specify a different default patch directory.")
