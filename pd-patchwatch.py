@@ -16,24 +16,15 @@ PD_BIN = os.environ.get("PD_BIN", os.path.join(os.sep, "usr", "bin", "pd"))
 PD_SEND = os.path.join(os.environ.get("PD_BIN", os.path.dirname(PD_BIN)),
                        "pdsend")
 PATCH_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "patches")
-INIT_PATCH = "receive.pd"
+INIT_PATCH = "patchbay.pd"
 
 
 class PdPatch(object):
-    modDir = None
-
-    def kill(self):
-        self.pd.send(
-            " ".join([";", self.fileName, "menuclose;"])
-        )
-        os.unlink(os.path.join(self.modDir, self.fileName))
-        return True
-
-    def __init__(self, patchPath=None, pd=None, channel=1):
-        self.objects = 0
+    def __init__(self, patchPath=None, channel=1, pd=None):
+        self.objectCount = 0
         self.channel = channel
-        self.lines = []
-        self.gui = {}
+        self.objects = []
+        self.guiIndices = []
         self.pd = pd
 
         if patchPath:
@@ -44,49 +35,104 @@ class PdPatch(object):
                 fileName, self.name = patchName + ".pd", patchName
 
             p = PdParser(os.path.join(patchDir, fileName))
-            p.add_filter_method(self.get_line)
-            p.add_filter_method(self.found_object, type="#X")
             p.add_filter_method(self.found_io, type="#X", object="adc~")
             p.add_filter_method(self.found_io, type="#X", object="dac~")
+            p.add_filter_method(self.found_connect, type="#X",
+                                action="connect")
             for cls in pdgui.PdGui.__subclasses__():
-                p.add_filter_method(partial(self.found_gui, cls),
-                                    type="#X", object=cls.__name__)
+                p.add_filter_method(partial(self.found_object, cls), type="#X",
+                                    object=cls.__name__)
+            p.add_filter_method(partial(self.found_object, pdgui.PdObject),
+                                action="obj", type="#X")
             print(p.parse(), "elements in this patch.")
 
-            self.fileName = fileNameInsert(fileName, channel)
-            with open(os.path.join(PdPatch.modDir,
-                                   self.fileName), "w") as patch:
-                self.dir, self.fileName = os.path.split(patch.name)
-                while self.lines:
-                    patch.write(self.lines.pop(0) + ";\n")
-            print(open(os.path.join(self.dir, self.fileName), "r").read())
-            self.pd.send(
-                " ".join([";", "pd open", self.fileName, self.dir, ";"])
-            )
+    def _makeConnection(self, fromSocket, toSocket):
+        self.objects[fromSocket.index].outlets[fromSocket.position] = toSocket
+        self.objects[toSocket.index].inlets[toSocket.position] = fromSocket
 
-    def get_line(self, canvasStack, type, action, args):
-        self.lines.append(" ".join([type, action, args]))
-
-    def found_object(self, canvasStack, type, action, args):
-        self.objects += 1
+    def found_connect(self, canvasStack, type, action, args):
+        obj1, outlet, obj2, inlet = map(int, args.split())
+        self._makeConnection(pdgui.socket(obj1, outlet),
+                             pdgui.socket(obj2, inlet))
 
     def found_io(self, canvasStack, type, action, args):
-        thisLine = self.lines[-1]
-        endIdx = thisLine.find("~")
-        self.lines[-1] = " ".join([thisLine[:endIdx + 1], str(self.channel)])
+        pass
 
-    def found_gui(self, cls, canvasStack, type, action, args):
-        self.gui[self.objects - 1] = cls(args.split())
-        print("canvasStack:", canvasStack,
-              "type:", type,
-              "action:", action,
-              "arguments:", args.split())
+    def found_object(self, cls, canvasStack, type, action, args):
+        if cls is pdgui.PdObject:
+            self.objects.append(cls(args.split()))
+            self.objectCount += 1
+        else:
+            self.guiIndices.append(self.objectCount - 1)
+            print("canvasStack:", canvasStack,
+                  "type:", type,
+                  "action:", action,
+                  "arguments:", args.split())
+
+    def add(self, objectArgs):
+        self.objects.append(pdgui.PdObject(objectArgs))
+        self.pd.send(" ".join(["obj"] + objectArgs))
+        return len(self.objects) - 1
+
+    def getObj(self, index):
+        return self.objects[index]
+
+    def removeObjectAt(self, index):
+        objectToRemove = self.objects[index]
+        # Remove this object's inbound connections from other objects
+        for outSocket in objectToRemove.inlets.values():
+            self.objects[outSocket.index].outlets.pop(outSocket.position)
+        # Remove this object's outbound connections from other objects
+        for inSocket in objectToRemove.outlets.values():
+            self.objects[inSocket.index].inlets.pop(inSocket.position)
+
+        # Find this object and remove it
+        self.pd.send(" ".join(["find", objectToRemove.name, "1"]))
+        for i in range(sum(obj.name == objectToRemove.name
+                       for obj in self.objects[:index])):
+            self.pd.send("findagain")
+        self.pd.send("cut")
+
+        # Adjust indices of removed object's outgoing sockets to higher indices
+        for pos, outgoingSocket in objectToRemove.outlets.items():
+            if outgoingSocket.index >= index:
+                fixedSocket = pdgui.socket(outgoingSocket.index - 1,
+                                           outgoingSocket.position)
+                objectToRemove.outlets[pos] = fixedSocket
+
+        # Adjust indices of all connections after the removed one
+        for i, obj in enumerate(self.objects[index + 1:]):
+            for pos, incomingSocket in obj.inlets.items():
+                self._makeConnection(incomingSocket,
+                                     pdgui.socket(i + index, pos))
+
+        return self.objects.pop(index)
+
+    def hasConnection(self, fromSocket, toSocket):
+        return (
+            self.objects[fromSocket.index].outlets[fromSocket.position]
+            == toSocket and
+            self.objects[toSocket.index].inlets[toSocket.position]
+            == fromSocket
+        )
+
+    def disconnect(self, fromSocket, toSocket):
+        if self.hasConnection(fromSocket, toSocket):
+            self.objects[fromSocket.index].outlets.pop(fromSocket.position)
+            self.objects[toSocket.index].inlets.pop(fromSocket.position)
+        self.pd.send(" ".join(
+            map(str, ("disconnect", ) + fromSocket + toSocket)
+        ))
+
+    def connect(self, fromSocket, toSocket):
+        self._makeConnection(fromSocket, toSocket)
+        self.pd.send(" ".join(map(str, ("connect", ) + fromSocket + toSocket)))
 
     def __str__(self):
         return (
-            "{}, with GUI elements:".format(name) + os.linesep +
-            os.linesep.join(("{:<3} {}".format(i, obj.args)
-                             for i, obj in self.gui.items()))
+            "{}, with GUI elements:".format(self.name) + os.linesep +
+            os.linesep.join(("{:<3} {}".format(i, self.objects[i].args)
+                             for i in self.guiIndices))
         )
 
 
@@ -96,65 +142,63 @@ def fileNameInsert(f, insert):
 
 
 class PdPatchBay(object):
-    def _makeRouter(self):
-        with open(os.path.join(self.modDir, "router.pd"), "w") as router:
-            routerName = router.name[:]
-            print("#N canvas 0 0 800 1000 10;", file=router)
-            print("#X obj 12 10 netreceive 3000;", file=router)
-            print("#X obj 12 40 route pd",
-                  " ".join([fileNameInsert(p, str(chan))
-                           for p in self.availPatches
-                           for chan in range(1, 3)]), ";",
-                  file=router)
-            print("#X obj 12 140 s pd;", file=router)
-            for i, patchName in enumerate(self.availPatches):
-                for chan in range(1, 3):
-                    print(
-                        "#X obj 12", 170 + 30 * i, "s",
-                        "pd-{};".format(fileNameInsert(patchName, str(chan))),
-                        file=router
-                    )
-            print("#X connect 0 0 1 0;", file=router)
-            print("#X connect 1 0 2 0;", file=router)
-            for i in range(len(self.availPatches)):
-                for chan in range(2):
-                    print("#X connect 1",
-                          2 * i + 1 + chan, 2 * i + 3 + chan, 0,
-                          ";", file=router)
-            print("", file=router)
-        return routerName
-
     def __init__(self, patchDir=PATCH_DIR, nogui=True):
         self.patchDir = patchDir
-        self.modDir = mkdtemp()
-        PdPatch.modDir = self.modDir
         self.availPatches = os.listdir(self.patchDir)
-        self.patches = ({}, {})
-        self.router = self._makeRouter()
-        self.pd = pd(initPatch=self.router, nogui=nogui)
+        self.effects = ({}, {})
+        self.pd = pd(initPatch=os.path.join(patchDir, INIT_PATCH), nogui=nogui)
+        self.patch = PdPatch(patchPath=os.path.join(patchDir, INIT_PATCH),
+                             channel=None,
+                             pd=self.pd)
+        self.ins, self.outs = [2, 3], [4, 5]
+
+    def _chainConnect(self, newObjIndex, channel):
+        # disconnect dac from previous patch
+        toIndex = self.outs[channel]
+        outObj = self.patch.getObj(toIndex)
+        previousOutlet = outObj.inlets[0]
+        self.patch.disconnect(previousOutlet,
+                              pdgui.socket(toIndex, 0))
+        # connect previous patch to new patch
+        self.patch.connect(previousOutlet,
+                           pdgui.socket(newObjIndex, 0))
+        # connect new patch to dac
+        self.patch.connect(pdgui.socket(newObjIndex, 0),
+                           pdgui.socket(self.outs[channel], 0))
 
     def start(self, name, channel=0):
-        self.patches[channel][name] = PdPatch(
-            pd=self.pd,
+        newPatch = PdPatch(
             patchPath=os.path.join(self.patchDir, name),
             channel=channel + 1,
         )
+        objectArgs = list(map(str, [
+            315 if channel else 40,
+            80 + 40 * (len(self.effects[channel]) + 1),
+            name if name.endswith("~") else name + "~"
+        ]))
+        newIndex = self.patch.add(objectArgs)
+        self._chainConnect(newIndex, channel)
+        self.effects[channel][name] = (newPatch, newIndex)
 
     def stop(self, name, channel=0):
-        if name in self.patches[channel]:
-            self.patches[channel][name].kill()
-            self.patches[channel].pop(name)
+        if name in self.effects[channel]:
+            patch, index = self.effects[channel].pop(name)
+            removedObj = self.patch.removeObjectAt(index)
+            self.patch.connect(removedObj.inlets[0],
+                               removedObj.outlets[0])
+        for name, eff in self.effects[channel].items():
+            if eff[1] >= index:
+                self.effects[channel][name] = (eff[0], eff[1] - 1)
+
 
     def stop_all(self):
-        for chan, channelPatches in enumerate(self.patches):
-            for patchName in list(channelPatches.keys()):
+        for chan, channelEffects in enumerate(self.effects):
+            for patchName in list(channelEffects.keys()):
                 self.stop(patchName, chan)
 
     def shutdown(self):
         self.stop_all()
         self.pd.kill()
-        os.unlink(self.router)
-        os.rmdir(self.modDir)
 
 
 class PatchWatcher(cmd.Cmd):
@@ -183,7 +227,7 @@ class PatchWatcher(cmd.Cmd):
     def do_start(self, line):
         name, channel = PatchWatcher._parseNameAndChannel(line)
         channel = channel or 0
-        if name in self.patchBay.patches[channel]:
+        if name in self.patchBay.effects[channel]:
             print("Patch {} is already running on channel {}!".format(
                 name, channel
             ))
@@ -202,7 +246,7 @@ class PatchWatcher(cmd.Cmd):
             return barePatchNames
 
     def do_show(self, __):
-        for chan, channelPatches in enumerate(self.patchBay.patches):
+        for chan, channelPatches in enumerate(self.patchBay.effects):
             print("Channel", chan + 1)
             for patch in self.channelPatches.values():
                 print(patch)

@@ -50,9 +50,8 @@ class pd(object):
 
         try:
             print(args)
-            self.proc = Popen(args, stdin=None,
+            self.proc = Popen(args, stdin=None, stderr=PIPE, stdout=PIPE,
                               close_fds=(sys.platform != "win32"))
-            time.sleep(5)
         except OSError:
             raise PdException(
                 "Problem running `{}` from '{}'".format(self.pdbin,
@@ -61,11 +60,10 @@ class pd(object):
     def send(self, msg):
         args = [self.pdsend, str(DEFAULT_PORT)]
         print(args, msg)
+        msg = "; " + msg + ";"
         sendProc = Popen(args, stdin=PIPE, close_fds=(sys.platform != "win32"),
                          universal_newlines=True)
         out, err = sendProc.communicate(input=msg)
-        print(out, err)
-        time.sleep(1)
 
     def kill(self):
         self.proc.send_signal(signal.SIGINT)

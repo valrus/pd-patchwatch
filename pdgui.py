@@ -1,4 +1,7 @@
 import os
+from collections import namedtuple
+
+socket = namedtuple("connection", ["index", "position"])
 
 
 class PdObject(object):
@@ -12,9 +15,12 @@ class PdObject(object):
         self.args = []
         self.inlets = {}
         self.outlets = {}
-        for i, arg in enumerate(self.__class__.args):
+        for i, (argName, arg) in enumerate(zip(self.__class__.args, argList)):
             self.__dict__[self.__class__.args[i]] = arg
         self.args = argList[len(self.__class__.args):]
+
+    def __repr__(self):
+        return "<{0} object>".format(self.name)
 
     def __str__(self):
         return os.linesep.join(
