@@ -147,7 +147,8 @@ def fileNameInsert(f, insert):
 class PdPatchBay(object):
     def __init__(self, patchDir=PATCH_DIR, nogui=True):
         self.patchDir = patchDir
-        self.availPatches = os.listdir(self.patchDir)
+        self.availPatches = [p for p in os.listdir(self.patchDir)
+                             if os.path.splitext(p)[0].endswith("~")]
         self.effects = ({}, {})
         self.pd = pd(initPatch=os.path.join(patchDir, INIT_PATCH), nogui=nogui)
         self.patch = PdPatch(patchPath=os.path.join(patchDir, INIT_PATCH),
@@ -170,6 +171,7 @@ class PdPatchBay(object):
                            pdgui.socket(self.outs[channel], 0))
 
     def start(self, name, channel=0):
+        name = name if name.endswith("~") else name + "~"
         newPatch = PdPatch(
             patchPath=os.path.join(self.patchDir, name),
             channel=channel + 1,
@@ -177,7 +179,7 @@ class PdPatchBay(object):
         objectArgs = list(map(str, [
             315 if channel else 40,
             80 + 40 * (len(self.effects[channel]) + 1),
-            name if name.endswith("~") else name + "~"
+            name
         ]))
         newIndex = self.patch.add(objectArgs)
         self._chainConnect(newIndex, channel)
