@@ -271,10 +271,10 @@ class PatchWatcher(cmd.Cmd):
         return patchName, channel
 
     def do_stop(self, line):
-        if not line.strip():
-            return
         if line is Ellipsis:
             self.patchBay.shutdown()
+        elif not line.strip():
+            return
         else:
             self.patchBay.stop(*self._parseNameAndChannel(line))
 
