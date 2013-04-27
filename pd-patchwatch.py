@@ -171,7 +171,6 @@ class PdPatchBay(object):
                            pdgui.socket(self.outs[channel], 0))
 
     def start(self, name, channel=0):
-        name = name if name.endswith("~") else name + "~"
         newPatch = PdPatch(
             patchPath=os.path.join(self.patchDir, name),
             channel=channel + 1,
@@ -265,6 +264,7 @@ class PatchWatcher(cmd.Cmd):
     def _parseNameAndChannel(line):
         parts = line.strip().split()
         patchName = parts.pop(0)
+        patchName = patchName if patchName.endswith("~") else patchName + "~"
         channel = int(parts[0]) - 1 if parts else 0
         return patchName, channel
 
