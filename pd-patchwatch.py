@@ -46,13 +46,14 @@ class PdPatch(object):
                                 action="obj", type="#X")
             print(p.parse(), "elements in this patch.")
 
-    def _makeConnection(self, fromSocket, toSocket):
+    def _connectSockets(self, fromSocket, toSocket, twoWay=True):
         self.objects[fromSocket.index].outlets[fromSocket.position] = toSocket
-        self.objects[toSocket.index].inlets[toSocket.position] = fromSocket
+        if twoWay:
+            self.objects[toSocket.index].inlets[toSocket.position] = fromSocket
 
     def found_connect(self, canvasStack, type, action, args):
         obj1, outlet, obj2, inlet = map(int, args.split())
-        self._makeConnection(pdgui.socket(obj1, outlet),
+        self._connectSockets(pdgui.socket(obj1, outlet),
                              pdgui.socket(obj2, inlet))
 
     def found_io(self, canvasStack, type, action, args):
@@ -98,13 +99,15 @@ class PdPatch(object):
             if outgoingSocket.index >= index:
                 fixedSocket = pdgui.socket(outgoingSocket.index - 1,
                                            outgoingSocket.position)
-                objectToRemove.outlets[pos] = fixedSocket
+                self._connectSockets(pdgui.socket(index, pos), fixedSocket,
+                                     twoWay=False)
 
-        # Adjust indices of all connections after the removed one
+        # Adjust all incoming connections to objects after the removed one
         for i, obj in enumerate(self.objects[index + 1:]):
             for pos, incomingSocket in obj.inlets.items():
-                self._makeConnection(incomingSocket,
-                                     pdgui.socket(i + index, pos))
+                fixedSocket = pdgui.socket(i + index, pos)
+                self._connectSockets(incomingSocket, fixedSocket,
+                                     twoWay=False)
 
         return self.objects.pop(index)
 
@@ -125,7 +128,7 @@ class PdPatch(object):
         ))
 
     def connect(self, fromSocket, toSocket):
-        self._makeConnection(fromSocket, toSocket)
+        self._connectSockets(fromSocket, toSocket)
         self.pd.send(" ".join(map(str, ("connect", ) + fromSocket + toSocket)))
 
     def __str__(self):
@@ -186,10 +189,11 @@ class PdPatchBay(object):
             removedObj = self.patch.removeObjectAt(index)
             self.patch.connect(removedObj.inlets[0],
                                removedObj.outlets[0])
-        for name, eff in self.effects[channel].items():
-            if eff[1] >= index:
-                self.effects[channel][name] = (eff[0], eff[1] - 1)
-
+        # Reduce indices of all objects after the removed one
+        for channelEffects in self.effects:
+            for name, eff in channelEffects.items():
+                if eff[1] >= index:
+                    channelEffects[name] = (eff[0], eff[1] - 1)
 
     def stop_all(self):
         for chan, channelEffects in enumerate(self.effects):
