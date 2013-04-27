@@ -43,7 +43,7 @@ class PdPatch(object):
                 p.add_filter_method(partial(self.found_object, cls), type="#X",
                                     object=cls.__name__)
             p.add_filter_method(partial(self.found_object, pdgui.PdObject),
-                                action="obj", type="#X")
+                                type="#X")
             print(p.parse(), "elements in this patch.")
 
     def _connectSockets(self, fromSocket, toSocket, twoWay=True):
@@ -60,6 +60,8 @@ class PdPatch(object):
         pass
 
     def found_object(self, cls, canvasStack, type, action, args):
+        if action == "connect":
+            return
         if cls is pdgui.PdObject:
             self.objects.append(cls(args.split()))
             self.objectCount += 1
@@ -269,6 +271,8 @@ class PatchWatcher(cmd.Cmd):
         return patchName, channel
 
     def do_stop(self, line):
+        if not line.strip():
+            return
         if line is Ellipsis:
             self.patchBay.shutdown()
         else:
